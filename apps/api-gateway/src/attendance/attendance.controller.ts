@@ -7,7 +7,8 @@ import { ClientProxy } from '@nestjs/microservices';
 import { diskStorage } from 'multer';
 import { firstValueFrom } from 'rxjs';
 import { extname } from 'path';
-import { JwtAuthGuard, RolesGuard, Roles, UserRole, CurrentUser, JwtPayload } from '@app/common';
+import { JwtAuthGuard, RolesGuard, Roles, UserRole, CurrentUser } from '@app/common';
+import type { JwtPayload } from '@app/common';
 
 @Controller('attendance')
 @UseGuards(JwtAuthGuard)
