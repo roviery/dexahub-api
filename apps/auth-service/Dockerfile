@@ -1,0 +1,15 @@
+FROM node:20-alpine AS builder
+WORKDIR /app
+COPY package*.json ./
+COPY tsconfig*.json ./
+COPY nest-cli.json ./
+RUN npm ci
+COPY apps/auth-service ./apps/auth-service
+COPY libs ./libs
+RUN npx nest build auth-service
+
+FROM node:20-alpine
+WORKDIR /app
+COPY --from=builder /app/dist/apps/auth-service ./dist
+COPY --from=builder /app/node_modules ./node_modules
+CMD ["node", "dist/main"]
