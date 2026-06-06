@@ -2,7 +2,7 @@ import { Controller, Post, Body, UseGuards } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { Inject } from '@nestjs/common';
 import { firstValueFrom } from 'rxjs';
-import { LoginDto, JwtAuthGuard } from '@app/common';
+import { LoginDto, JwtAuthGuard, RefreshTokenDto } from '@app/common';
 
 @Controller('auth')
 export class AuthController {
@@ -14,13 +14,13 @@ export class AuthController {
   }
 
   @Post('refresh')
-  refresh(@Body() body: { refreshToken: string }) {
+  refresh(@Body() body: RefreshTokenDto) {
     return firstValueFrom(this.authClient.send({ cmd: 'auth.refresh' }, body));
   }
 
   @UseGuards(JwtAuthGuard)
   @Post('logout')
-  logout(@Body() body: { refreshToken: string }) {
+  logout(@Body() body: RefreshTokenDto) {
     return firstValueFrom(this.authClient.send({ cmd: 'auth.logout' }, body));
   }
 }

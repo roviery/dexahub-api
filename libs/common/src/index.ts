@@ -7,3 +7,4 @@ export * from './guards/roles.guard';
 export * from './dto/login.dto';
 export * from './dto/create-employee.dto';
 export * from './dto/update-employee.dto';
+export * from './dto/refresh-token.dto';

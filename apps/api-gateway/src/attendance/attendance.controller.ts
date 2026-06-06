@@ -1,6 +1,6 @@
 import {
   Controller, Post, Get, Param, Query, UseGuards, UseInterceptors,
-  UploadedFile, Inject,
+  UploadedFile, Inject, BadRequestException,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ClientProxy } from '@nestjs/microservices';
@@ -29,6 +29,7 @@ export class AttendanceController {
     }),
   )
   checkIn(@UploadedFile() file: Express.Multer.File, @CurrentUser() user: JwtPayload) {
+    if (!file) throw new BadRequestException('Photo is required');
     const photoPath = `attendance/${file.filename}`;
     return firstValueFrom(
       this.attendanceClient.send({ cmd: 'attendance.checkIn' }, { employeeId: user.sub, photoPath }),

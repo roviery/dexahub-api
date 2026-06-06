@@ -95,5 +95,14 @@ describe('AuthService', () => {
         service.login({ email: 'test@example.com', password: 'wrong' }),
       ).rejects.toThrow(UnauthorizedException);
     });
+
+    it('throws UnauthorizedException when employee is deactivated', async () => {
+      jest.spyOn(bcrypt, 'compare').mockResolvedValue(true as never);
+      (employeeRepo.findOne as jest.Mock).mockResolvedValue({ ...mockEmployee, isActive: false });
+
+      await expect(
+        service.login({ email: 'test@example.com', password: 'password' }),
+      ).rejects.toThrow(UnauthorizedException);
+    });
   });
 });

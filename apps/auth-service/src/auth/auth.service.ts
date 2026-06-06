@@ -26,6 +26,8 @@ export class AuthService {
     const isMatch = await bcrypt.compare(dto.password, employee.password);
     if (!isMatch) throw new UnauthorizedException('Invalid credentials');
 
+    if (!employee.isActive) throw new UnauthorizedException('Account disabled');
+
     const payload: JwtPayload = { sub: employee.id, role: employee.role };
     const accessToken = this.jwtService.sign(payload);
     const refreshToken = this.jwtService.sign(payload, {

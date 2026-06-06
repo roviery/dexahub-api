@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, Index } from 'typeorm';
 
 @Entity('refresh_tokens')
 export class RefreshToken {
@@ -8,6 +8,7 @@ export class RefreshToken {
   @Column({ name: 'employee_id' })
   employeeId: string;
 
+  @Index()
   @Column({ length: 500 })
   token: string;
 
