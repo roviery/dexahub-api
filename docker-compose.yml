@@ -73,6 +73,9 @@ services:
     environment:
       JWT_SECRET: ${JWT_SECRET}
       JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET}
+      AUTH_SERVICE_HOST: auth-service
+      USER_SERVICE_HOST: user-service
+      ATTENDANCE_SERVICE_HOST: attendance-service
     volumes:
       - uploads_data:/app/uploads
     depends_on:
