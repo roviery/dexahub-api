@@ -13,4 +13,4 @@ WORKDIR /app
 COPY --from=builder /app/dist/apps/api-gateway ./dist
 COPY --from=builder /app/node_modules ./node_modules
 RUN mkdir -p uploads/attendance
-CMD ["node", "dist/main"]
+CMD ["node", "dist/apps/api-gateway/src/main"]
