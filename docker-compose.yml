@@ -25,7 +25,7 @@ services:
       DB_PORT: 3306
       DB_USER: dexahub
       DB_PASS: dexahub_pass
-      DB_NAME: dexahub_db
+      DB_NAME: dexahub
       JWT_SECRET: ${JWT_SECRET}
       JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET}
     depends_on:
@@ -41,7 +41,7 @@ services:
       DB_PORT: 3306
       DB_USER: dexahub
       DB_PASS: dexahub_pass
-      DB_NAME: dexahub_db
+      DB_NAME: dexahub
       JWT_SECRET: ${JWT_SECRET}
       JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET}
     depends_on:
@@ -57,7 +57,7 @@ services:
       DB_PORT: 3306
       DB_USER: dexahub
       DB_PASS: dexahub_pass
-      DB_NAME: dexahub_db
+      DB_NAME: dexahub
     depends_on:
       mysql:
         condition: service_healthy
