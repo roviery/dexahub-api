@@ -10,9 +10,9 @@ async function runSeed() {
     type: 'mysql',
     host: process.env.DB_HOST || 'localhost',
     port: parseInt(process.env.DB_PORT || '3306', 10),
-    username: process.env.DB_USER,
-    password: process.env.DB_PASS,
-    database: process.env.DB_NAME,
+    username: process.env.DB_USER || 'dexahub',
+    password: process.env.DB_PASS || 'dexahub_pass',
+    database: process.env.DB_NAME || 'dexahub',
     entities: [Employee],
     synchronize: false,
   });
