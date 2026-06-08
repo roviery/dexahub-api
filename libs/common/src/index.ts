@@ -1,3 +1,4 @@
+export * from './filters/http-to-rpc-exception.filter';
 export * from './types/user-role.enum';
 export * from './types/jwt-payload.interface';
 export * from './decorators/current-user.decorator';

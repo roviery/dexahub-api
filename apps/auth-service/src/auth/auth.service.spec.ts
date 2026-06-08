@@ -105,4 +105,16 @@ describe('AuthService', () => {
       ).rejects.toThrow(UnauthorizedException);
     });
   });
+
+  describe('logout', () => {
+    it('deletes the refresh token and returns a non-empty result', async () => {
+      (refreshTokenRepo.delete as jest.Mock).mockResolvedValue({ affected: 1 });
+
+      const result = await service.logout('some-refresh-token');
+
+      // Must emit a value so the gateway's firstValueFrom does not throw EmptyError
+      expect(result).toEqual({ success: true });
+      expect(refreshTokenRepo.delete).toHaveBeenCalledWith({ token: 'some-refresh-token' });
+    });
+  });
 });
