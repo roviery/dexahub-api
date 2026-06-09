@@ -10,7 +10,7 @@ RUN npx nest build api-gateway
 
 FROM node:20-alpine
 WORKDIR /app
-COPY --from=builder /app/dist/apps/api-gateway ./dist
+COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/node_modules ./node_modules
 RUN mkdir -p uploads/attendance
-CMD ["node", "dist/apps/api-gateway/src/main"]
+CMD ["node", "dist/apps/api-gateway/main"]

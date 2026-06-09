@@ -10,6 +10,6 @@ RUN npx nest build attendance-service
 
 FROM node:20-alpine
 WORKDIR /app
-COPY --from=builder /app/dist/apps/attendance-service ./dist
+COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/node_modules ./node_modules
-CMD ["node", "dist/apps/attendance-service/src/main"]
+CMD ["node", "dist/apps/attendance-service/main"]

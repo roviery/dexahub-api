@@ -10,6 +10,6 @@ RUN npx nest build user-service
 
 FROM node:20-alpine
 WORKDIR /app
-COPY --from=builder /app/dist/apps/user-service ./dist
+COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/node_modules ./node_modules
-CMD ["node", "dist/apps/user-service/src/main"]
+CMD ["node", "dist/apps/user-service/main"]
