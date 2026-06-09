@@ -1,98 +1,190 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# DexaHub API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+NestJS microservices backend for the DexaHub HR & attendance platform.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Architecture Overview
 
-## Description
+The backend is a **microservices monorepo** — one HTTP-facing gateway that fans out to three TCP backend services over NestJS TCP transport.
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
-
-## Project setup
-
-```bash
-$ npm install
+```
+Browser / Frontend
+       │
+       ▼  HTTP :3000
+  api-gateway          ← only public-facing service (auth, file uploads, routing)
+  /    |    \
+ TCP  TCP   TCP
+3001 3002  3003
+ │    │      │
+auth  user  attendance
+svc   svc    svc
+ │    │      │
+ └────┴──────┘
+      MySQL :3306
 ```
 
-## Compile and run the project
+| Service | Port | Responsibility |
+|---|---|---|
+| `api-gateway` | 3000 (HTTP) | JWT validation, routing, file uploads |
+| `auth-service` | 3001 (TCP) | Login, refresh, logout, token storage |
+| `user-service` | 3002 (TCP) | Employee CRUD (HRD admin only) |
+| `attendance-service` | 3003 (TCP) | Daily photo check-in and records |
+
+## Prerequisites
+
+- **Node.js** v20+
+- **Docker** (for MySQL)
+- **NestJS CLI** — `npm install -g @nestjs/cli`
+
+## Quick Start (Local Dev)
+
+### 1. Install dependencies
 
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+cd dexahub-api
+npm install
 ```
 
-## Run tests
+### 2. Set up environment
 
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+cp .env.example .env
 ```
 
-## Deployment
+The defaults in `.env.example` work out of the box for local development. The database credentials match what Docker Compose spins up.
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+### 3. Start MySQL
 
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+docker compose up mysql -d
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+Wait a few seconds for MySQL to be ready (you can check with `docker compose logs mysql`).
 
-## Resources
+### 4. Start all four services
 
-Check out a few resources that may come in handy when working with NestJS:
+Open **four terminal tabs** and run one command per tab (all from `dexahub-api/`):
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+```bash
+# Tab 1
+nest start auth-service --watch
 
-## Support
+# Tab 2
+nest start user-service --watch
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+# Tab 3
+nest start attendance-service --watch
 
-## Stay in touch
+# Tab 4 — the HTTP entry point
+nest start api-gateway --watch
+```
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+All services must be running together for the app to work. The gateway will fail its microservice calls if a backend service is down.
 
-## License
+### 5. Seed demo employees
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+```bash
+npm run seed
+```
+
+This is idempotent — safe to run multiple times. Use `--fresh` to wipe and re-seed:
+
+```bash
+npm run seed -- --fresh
+```
+
+### 6. Verify the API is up
+
+```bash
+curl http://localhost:3000/api/v1
+```
+
+You should get a response (or a 404 — either way the gateway is alive).
+
+## Test Accounts
+
+After seeding, you can log in with these credentials:
+
+| Role | Email | Password |
+|---|---|---|
+| HRD Admin | `admin@dexahub.com` | `Test@123!` |
+| Employee | `employee.one@dexahub.com` | `Test@123!` |
+| Employee | `employee.two@dexahub.com` | `Test@123!` |
+
+> Check `scripts/seed.ts` for the full list of seeded accounts.
+
+## Environment Variables
+
+| Variable | Description | Default |
+|---|---|---|
+| `DB_HOST` | MySQL host | `localhost` |
+| `DB_PORT` | MySQL port | `3306` |
+| `DB_USER` | MySQL user | `dexahub` |
+| `DB_PASS` | MySQL password | `dexahub_pass` |
+| `DB_NAME` | MySQL database name | `dexahub` |
+| `JWT_SECRET` | Access token signing secret | — |
+| `JWT_REFRESH_SECRET` | Refresh token signing secret | — |
+| `AUTH_SERVICE_HOST` | auth-service host | `localhost` |
+| `USER_SERVICE_HOST` | user-service host | `localhost` |
+| `ATTENDANCE_SERVICE_HOST` | attendance-service host | `localhost` |
+
+> In Docker Compose, set `*_SERVICE_HOST` to the compose service names (`auth-service`, `user-service`, `attendance-service`). For local dev, keep them as `localhost`.
+
+## Running with Docker Compose (Full Stack)
+
+To spin up the entire backend stack (including the frontend) in Docker:
+
+```bash
+# From dexahub-api/
+docker compose up --build
+```
+
+This starts MySQL, all three backend services, the gateway on `:3000`, and the frontend on `:3004`.
+
+## Scripts
+
+```bash
+# Development (run individually per service)
+nest start <service> --watch     # auth-service | user-service | attendance-service | api-gateway
+
+# Build
+nest build <service>             # build a specific service
+npm run build                    # build api-gateway (default)
+
+# Seed
+npm run seed                     # seed demo employees (idempotent)
+npm run seed -- --fresh          # wipe employees table then re-seed
+
+# Tests
+npm test                         # all unit tests
+npm test -- <pattern>            # e.g. npm test -- auth.service
+npm run test:watch
+npm run test:cov
+npm run test:e2e
+
+# Code quality
+npm run lint
+npm run format
+```
+
+## Project Structure
+
+```
+dexahub-api/
+  apps/
+    api-gateway/        # HTTP entry point — controllers, guards, file upload
+    auth-service/       # login / refresh / logout
+    user-service/       # employee CRUD
+    attendance-service/ # check-in records
+  libs/
+    common/             # shared DTOs, guards, decorators, enums (@app/common)
+  docker-compose.yml
+  nest-cli.json         # monorepo config
+```
+
+## Key Conventions
+
+- **Auth is gateway-only.** Backend services trust whatever the gateway forwards — they have no auth of their own.
+- **Two `Employee` entities, one table.** `auth-service` and `user-service` each have their own `Employee` entity — both map the same `employees` table. If you change the schema in one, update the other.
+- **No migrations.** TypeORM runs with `synchronize: true` — schema changes are applied automatically from entities on startup.
+- **Exception propagation.** Throw standard NestJS `HttpException`s in any service. The `HttpToRpcExceptionFilter` / `RpcExceptionFilter` pair serializes them across TCP and reconstructs the correct HTTP status at the gateway.
+- **Message patterns.** Gateway and services communicate via `{ cmd: 'service.action' }` strings. Keep them in sync between the gateway controller (`client.send`) and the service controller (`@MessagePattern`).
