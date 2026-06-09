@@ -5,7 +5,8 @@
   "monorepo": true,
   "root": "apps/api-gateway",
   "compilerOptions": {
-    "tsConfigPath": "apps/api-gateway/tsconfig.app.json"
+    "tsConfigPath": "apps/api-gateway/tsconfig.app.json",
+    "webpack": true
   },
   "projects": {
     "api-gateway": {
@@ -14,7 +15,8 @@
       "entryFile": "main",
       "sourceRoot": "apps/api-gateway/src",
       "compilerOptions": {
-        "tsConfigPath": "apps/api-gateway/tsconfig.app.json"
+        "tsConfigPath": "apps/api-gateway/tsconfig.app.json",
+        "webpack": true
       }
     },
     "auth-service": {
@@ -23,7 +25,8 @@
       "entryFile": "main",
       "sourceRoot": "apps/auth-service/src",
       "compilerOptions": {
-        "tsConfigPath": "apps/auth-service/tsconfig.app.json"
+        "tsConfigPath": "apps/auth-service/tsconfig.app.json",
+        "webpack": true
       }
     },
     "user-service": {
@@ -32,7 +35,8 @@
       "entryFile": "main",
       "sourceRoot": "apps/user-service/src",
       "compilerOptions": {
-        "tsConfigPath": "apps/user-service/tsconfig.app.json"
+        "tsConfigPath": "apps/user-service/tsconfig.app.json",
+        "webpack": true
       }
     },
     "attendance-service": {
@@ -41,7 +45,8 @@
       "entryFile": "main",
       "sourceRoot": "apps/attendance-service/src",
       "compilerOptions": {
-        "tsConfigPath": "apps/attendance-service/tsconfig.app.json"
+        "tsConfigPath": "apps/attendance-service/tsconfig.app.json",
+        "webpack": true
       }
     },
     "common": {
