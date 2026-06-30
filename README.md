@@ -106,9 +106,10 @@ After seeding, you can log in with these credentials:
 
 | Role | Email | Password |
 |---|---|---|
-| HRD Admin | `admin@dexahub.com` | `Test@123!` |
+| HRD Admin | `hrd.admin@dexahub.com` | `Test@123!` |
 | Employee | `employee.one@dexahub.com` | `Test@123!` |
 | Employee | `employee.two@dexahub.com` | `Test@123!` |
+| Employee | `employee.three@dexahub.com` | `Test@123!` |
 
 > Check `scripts/seed.ts` for the full list of seeded accounts.
 
